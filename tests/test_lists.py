@@ -29,3 +29,21 @@ import humanize
 )
 def test_natural_list(test_args: Iterable[Any], expected: str) -> None:
     assert humanize.natural_list(*test_args) == expected
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected",
+    [
+        ({"conjunction": "or"}, "one, two or three"),
+        ({"oxford_comma": True}, "one, two, and three"),
+        ({"conjunction": "or", "oxford_comma": True}, "one, two, or three"),
+    ],
+)
+def test_natural_list_options(kwargs: dict[str, Any], expected: str) -> None:
+    assert humanize.natural_list(["one", "two", "three"], **kwargs) == expected
+
+
+def test_natural_list_max_items() -> None:
+    items = ["a", "b", "c", "d", "e"]
+    assert humanize.natural_list(items, max_items=2) == "a, b and 3 others"
+    assert humanize.natural_list(items, max_items=5) == "a, b, c, d and e"
